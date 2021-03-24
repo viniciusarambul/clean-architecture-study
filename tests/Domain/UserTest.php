@@ -1,10 +1,14 @@
 <?php 
-namespace App\Domain;
+namespace App\Domain\User;
+
 use PHPUnit\Framework\TestCase;
+use App\Domain\Account\Account;
 
-final class UserTest extends TestCase{
+final class UserTest extends TestCase
+{
 
-    public function testConstructUser(){
+    public function testConstructUser()
+    {
         $account = new Account("1","123",[]);
         $user = new User("123","vinicius","12345","vinicius@hotmail.com","123",1, $account);
 

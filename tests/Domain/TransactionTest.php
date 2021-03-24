@@ -1,11 +1,13 @@
 <?php 
-namespace App\Domain;
+namespace App\Domain\Transaction;
+
 use PHPUnit\Framework\TestCase;
 
-final class TransactionTest extends TestCase{
+final class TransactionTest extends TestCase
+{
 
-    public function testConstructTransaction(){
-
+    public function testConstructTransaction()
+    {
         //parametros = Beneficiário, Pagador e Valor
         $transaction = new Transaction("C", 100.00);
 

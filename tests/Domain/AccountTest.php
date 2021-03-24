@@ -1,10 +1,13 @@
 <?php 
-namespace App\Domain;
+namespace App\Domain\Account;
+
 use PHPUnit\Framework\TestCase;
 
-final class AccountTest extends TestCase{
+final class AccountTest extends TestCase
+{
 
-    public function testConstructAccount(){
+    public function testConstructAccount()
+    {
 
         $account = new Account("uuid123","114", [1]);
 

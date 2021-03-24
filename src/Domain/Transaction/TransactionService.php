@@ -1,10 +1,13 @@
 <?php
+namespace App\Domain\Transaction;
 
-namespace App\Domain;
+use App\Domain\User\User;
 
-class TransactionService {
+class TransactionService 
+{
 
-    public function makeTransfer(User $payer,User $payee,float $amount){
+    public function makeTransfer(User $payer,User $payee,float $amount)
+    {
 
         if($payer->getType() == User::USER_MERCHANT){
             throw new UserNotAllowedMakeTransaction;

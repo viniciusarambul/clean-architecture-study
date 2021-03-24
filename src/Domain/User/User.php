@@ -1,8 +1,10 @@
 <?php
+namespace App\Domain\User;
 
-namespace App\Domain;
+use App\Domain\Account\Account;
 
-class User {
+class User 
+{
 
     const USER_PERSON = 'person';
     const USER_MERCHANT = 'merchant';
@@ -15,7 +17,15 @@ class User {
     private string $type;
     private Account $account;
 
-    public function __construct(string $id, String $name, String $document, String $email, String $password, string $type, Account $account){
+    public function __construct(
+        string $id, 
+        string $name, 
+        string $document,
+        string $email, 
+        string $password, 
+        string $type, 
+        Account $account
+    ) {
         $this->id = $id;
         $this->name = $name;
         $this->document = $document;
@@ -25,31 +35,38 @@ class User {
         $this->account = $account;
     }
     
-    public function getId() : string{
+    public function getId() : string
+    {
         return $this->id;
     }
     
-    public function getName() : string{
+    public function getName() : string
+    {
         return $this->name;
     }
     
-    public function getDocument() : string{
+    public function getDocument() : string
+    {
         return $this->document;
     }
     
-    public function getEmail() : string{
+    public function getEmail() : string
+    {
         return $this->email;
     }
 
-    public function getPassword() : string{
+    public function getPassword() : string
+    {
         return $this->password;
     }
 
-    public function getType() : string{
+    public function getType() : string
+    {
         return $this->type;
     }
     
-    public function getAccount() : Account{
+    public function getAccount() : Account
+    {
         return $this->account;
     }
     
