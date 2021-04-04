@@ -3,6 +3,8 @@ namespace App\Infraestructure\Repository;
 
 use App\Domain\User\UserRepository;
 use App\Domain\User\User;
+use App\Domain\Exception\UserPayerDontExist;
+use PHPUnit\Framework\TestCase;
 
 class UserArrayRepository implements UserRepository
 {
@@ -15,7 +17,8 @@ class UserArrayRepository implements UserRepository
     }
 
     public function find(string $id) : User
-    {
+    {   
         return $this->users[$id];
     }
+
 }

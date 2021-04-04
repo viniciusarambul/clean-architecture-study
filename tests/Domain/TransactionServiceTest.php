@@ -5,9 +5,13 @@ use PHPUnit\Framework\TestCase;
 use App\Domain\Account\Account;
 use App\Domain\User\User;
 use App\Domain\Transaction\Transaction;
-use App\Domain\Transaction\InsuficientBalance;
-use App\Domain\Transaction\UserNotAllowedMakeTransaction;
+use App\Domain\Exception\InsuficientBalance;
+use App\Domain\Exception\UserNotAllowedMakeTransaction;
+use App\Domain\Exception\UserPayerDontExist;
 use App\Infraestructure\Repository\UserRepository;
+use App\Domain\Transaction\AntifraudServiceInterface;
+use App\Domain\Exception\TransferNotAuthorized;
+use App\Domain\UseCase\MakeTransfer;
 
 final class MakeTransferTest extends TestCase
 {
@@ -28,8 +32,9 @@ final class MakeTransferTest extends TestCase
         ];
         
         $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
+        $antifraud = new \App\Infraestructure\Repository\Antifraud(true);
         
-        $uc = new \App\Usecase\MakeTransfer($repository);
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
         
         $uc("1","2",$amount);
 
@@ -51,8 +56,9 @@ final class MakeTransferTest extends TestCase
         ];
         
         $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
+        $antifraud = new \App\Infraestructure\Repository\Antifraud(true);
         
-        $uc = new \App\Usecase\MakeTransfer($repository);
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
         
         $uc("1","2",$amount);
     }
@@ -71,8 +77,9 @@ final class MakeTransferTest extends TestCase
         ];
         
         $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
+        $antifraud = new \App\Infraestructure\Repository\Antifraud(true);
         
-        $uc = new \App\Usecase\MakeTransfer($repository);
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
         
         $uc("1","2",$amount);
 
@@ -82,5 +89,30 @@ final class MakeTransferTest extends TestCase
         $this->assertEquals(2, count($users[2]->getAccount()->getTransaction()));    
     
     }
+
+    public function testNotAuthorized()
+    {
+        $this->expectException(TransferNotAuthorized::class);
+
+        $creditTransaction = new Transaction("credit", 100.00);
+        $debitTransaction = new Transaction("debit", 100.00);
+        $payeeAccount = new Account("uuid123","114", []);
+        $payerAccount = new Account("uuid123","114", [$creditTransaction]);
+        $amount = 100.00;
+        $users = [
+            "1" => new User("1","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payeeAccount),
+            "2" => new User("2","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
+        ];
+        
+        $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
+        $antifraud = new \App\Infraestructure\Repository\Antifraud(false);
+
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
+        
+        $uc("1","2",$amount);
+
+       
+    }
         
 }
+

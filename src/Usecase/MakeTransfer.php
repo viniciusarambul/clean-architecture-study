@@ -6,18 +6,24 @@ use App\Infraestructure\Repository\UserArrayRepository;
 use App\Domain\User\User;
 use App\Domain\User\Account;
 use App\Domain\Transaction\Transaction;
-use App\Domain\Transaction\InsuficientBalance;
-use App\Domain\Transaction\UserNotAllowedMakeTransaction;
+use App\Domain\Exception\InsuficientBalance;
+use App\Domain\Exception\UserNotAllowedMakeTransaction;
+use App\Domain\Exception\UserPayerDontExist;
+use App\Domain\Transaction\AntifraudServiceInterface;
+use App\Domain\Exception\TransferNotAuthorized;
 
 class MakeTransfer
 {
 
     private UserArrayRepository $repository;
+    private AntifraudServiceInterface $antifraud;
 
     public function __construct(
-        UserArrayRepository $repository
+        UserArrayRepository $repository,
+        AntifraudServiceInterface $antifraud
     ) {
         $this->repository = $repository;
+        $this->antifraud = $antifraud;
     }
 
     public function __invoke(
@@ -25,6 +31,10 @@ class MakeTransfer
         string $payer, 
         float $amount
     ) {
+        if(!$this->antifraud->authorize()){
+            throw new TransferNotAuthorized;
+        }
+
         $payee = $this->repository->find($payee);
         $payer = $this->repository->find($payer);
 
@@ -38,6 +48,7 @@ class MakeTransfer
 
         $payer->getAccount()->addTransaction(Transaction::debit($amount));
         $payee->getAccount()->addTransaction(Transaction::credit($amount));
+        
     }
 
 }

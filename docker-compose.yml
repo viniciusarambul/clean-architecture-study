@@ -2,5 +2,23 @@ version: '3'
 services:
   app:
     build: .
+    ports:
+      - 80:80
     volumes:
       - ./:/code
+    links:
+      - db
+    command: ["php", "-S", "0.0.0.0:80", "-t", "/code/"]
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: transaction
+      
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
