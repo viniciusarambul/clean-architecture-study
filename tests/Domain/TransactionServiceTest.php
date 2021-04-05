@@ -12,6 +12,7 @@ use App\Infraestructure\Repository\UserRepository;
 use App\Domain\Transaction\AntifraudServiceInterface;
 use App\Domain\Exception\TransferNotAuthorized;
 use App\Domain\UseCase\MakeTransfer;
+use App\Infraestructure\Repository\UserArrayRepository;
 
 final class MakeTransferTest extends TestCase
 {
@@ -28,15 +29,17 @@ final class MakeTransferTest extends TestCase
         $amount = 100.00;
         $users = [
             "1" => new User("1","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payeeAccount),
-            "2" => new User("2","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
+            "2" => new User("3","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
         ];
         
         $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
         $antifraud = new \App\Infraestructure\Repository\Antifraud(true);
-        
-        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
+        $transaction = new \App\Infraestructure\Repository\TransactionRepository($users[1], $amount, $users[2]);
+
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud, $transaction);
         
         $uc("1","2",$amount);
+
 
     }
 
@@ -52,15 +55,17 @@ final class MakeTransferTest extends TestCase
         $amount = 100.00;
         $users = [
             "1" => new User("1","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payeeAccount),
-            "2" => new User("2","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payerAccount),
+            "2" => new User("3","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payerAccount),
         ];
         
         $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
         $antifraud = new \App\Infraestructure\Repository\Antifraud(true);
-        
-        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
+        $transaction = new \App\Infraestructure\Repository\TransactionRepository($users[1], $amount, $users[2]);
+
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud, $transaction);
         
         $uc("1","2",$amount);
+
     }
 
     public function testExecute() 
@@ -73,13 +78,14 @@ final class MakeTransferTest extends TestCase
         $amount = 100.00;
         $users = [
             "1" => new User("1","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payeeAccount),
-            "2" => new User("2","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
+            "2" => new User("3","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
         ];
         
         $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
         $antifraud = new \App\Infraestructure\Repository\Antifraud(true);
-        
-        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
+        $transaction = new \App\Infraestructure\Repository\TransactionRepository($users[1], $amount, $users[2]);
+
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud, $transaction);
         
         $uc("1","2",$amount);
 
@@ -101,15 +107,17 @@ final class MakeTransferTest extends TestCase
         $amount = 100.00;
         $users = [
             "1" => new User("1","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payeeAccount),
-            "2" => new User("2","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
+            "2" => new User("3","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
         ];
         
         $repository = new \App\Infraestructure\Repository\UserArrayRepository($users);
         $antifraud = new \App\Infraestructure\Repository\Antifraud(false);
+        $transaction = new \App\Infraestructure\Repository\TransactionRepository($users[1], $amount, $users[2]);
 
-        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud);
+        $uc = new \App\Usecase\MakeTransfer($repository, $antifraud, $transaction);
         
         $uc("1","2",$amount);
+
 
        
     }

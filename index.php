@@ -25,11 +25,11 @@ $builder->addDefinitions([
     UserRepository::class => function(\DI\Container $c){
         $creditTransaction = new Transaction("credit", 100.00);
         $debitTransaction = new Transaction("debit", 100.00);
-        $payeeAccount = new Account("uuid123","114", []);
-        $payerAccount = new Account("uuid123","114", [$creditTransaction]);
+        $payeeAccount = new Account("1","114", []);
+        $payerAccount = new Account("3","114", [$creditTransaction]);
         $users = [
             "1" => new User("1","vinicius","12345","vinicius@hotmail.com","123",User::USER_MERCHANT, $payeeAccount),
-            "2" => new User("2","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
+            "2" => new User("3","vinicius","12345","vinicius@hotmail.com","123",User::USER_PERSON, $payerAccount),
         ];
 
         return  new \App\Infraestructure\Repository\UserArrayRepository($users);
@@ -37,8 +37,11 @@ $builder->addDefinitions([
     AntifraudServiceInterface::class => function(\DI\Container $c){
         return  new \App\Infraestructure\Repository\Antifraud(true);
     },
+    TransactionRepository::class => function(\DI\Container $c){
+        return  new \App\Infraestructure\Repository\TransactionRepository($users[1], $amount, $users[2]);
+    },
     MakeTransfer::class => function(\DI\Container $c){
-        return new MakeTransfer($c->get(UserRepository::class), $c->get(AntifraudServiceInterface::class));
+        return new MakeTransfer($c->get(UserRepository::class), $c->get(AntifraudServiceInterface::class), $c->get(TransactionRepository::class));
     }
 ]);
 $container = $builder->build();

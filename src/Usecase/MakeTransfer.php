@@ -11,19 +11,23 @@ use App\Domain\Exception\UserNotAllowedMakeTransaction;
 use App\Domain\Exception\UserPayerDontExist;
 use App\Domain\Transaction\AntifraudServiceInterface;
 use App\Domain\Exception\TransferNotAuthorized;
+use App\Infraestructure\Repository\TransactionRepository;
 
 class MakeTransfer
 {
 
     private UserArrayRepository $repository;
     private AntifraudServiceInterface $antifraud;
+    private TransactionRepository $transaction;
 
     public function __construct(
         UserArrayRepository $repository,
-        AntifraudServiceInterface $antifraud
+        AntifraudServiceInterface $antifraud,
+        TransactionRepository $transaction
     ) {
         $this->repository = $repository;
         $this->antifraud = $antifraud;
+        $this->transaction = $transaction;
     }
 
     public function __invoke(
@@ -48,6 +52,8 @@ class MakeTransfer
 
         $payer->getAccount()->addTransaction(Transaction::debit($amount));
         $payee->getAccount()->addTransaction(Transaction::credit($amount));
+
+        $save = $this->transaction->save($payee->getId(), $amount, $payer->getId());
         
     }
 

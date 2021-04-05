@@ -1,4 +1,5 @@
 <?php
+
 $servidor = "db";
 
 $usuario = "root";

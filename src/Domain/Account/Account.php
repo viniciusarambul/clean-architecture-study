@@ -35,26 +35,14 @@ class Account
 
     public function getBalance() : float
     {
-        $servidor = "db";
-
-        $usuario = "root";
-
-        $senha ="transaction";
-
-        $conexao = pg_connect('host=db user=root password=password dbname=transaction');
-
         $balance = 0;
 
         foreach($this->transaction as $transaction){
             if($transaction->getType() == Transaction::TRANSACTION_CREDIT){
                 $balance+=$transaction->getAmount();
-                $sql = "UPDATE account set balance = $balance where id = $this->id";
-                pg_query($conexao, $sql);
                 continue;
             }
             $balance-=$transaction->getAmount();
-            $sql = "UPDATE account set balance = $balance where id = $this->id";
-            pg_query($conexao, $sql);
         }
         return $balance;
     }
