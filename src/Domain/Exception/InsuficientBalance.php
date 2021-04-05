@@ -1,5 +1,5 @@
 <?php
-namespace App\Domain\Transaction;
+namespace App\Domain\Exception;
 
 use Exception;
 

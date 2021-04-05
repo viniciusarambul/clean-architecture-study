@@ -13,8 +13,8 @@ RUN set -ex \
   && apk --no-cache add \
     postgresql-dev
 
-RUN docker-php-ext-install pdo pdo_pgsql
+RUN docker-php-ext-install pgsql pdo pdo_pgsql
 
-RUN composer global require fzaninotto/faker:^1.4 mockery/mockery:^1.0 phpunit/phpunit:^8 squizlabs/php_codesniffer:^3.5.3
+RUN composer global require fzaninotto/faker:^1.4 mockery/mockery:^1.0 phpunit/phpunit:^8 squizlabs/php_codesniffer:^3.5.3 
 
 WORKDIR /code

@@ -14,5 +14,12 @@
     },
     "scripts":{
         "tests":"vendor/bin/phpunit tests/ --coverage-html reports/"
+    },
+    "require": {
+        "league/route": "^5.0",
+        "laminas/laminas-diactoros": "^2.5",
+        "laminas/laminas-httphandlerrunner": "^1.3",
+        "psr/container": "1.0",
+        "php-di/php-di": "^6.3"
     }
 }
