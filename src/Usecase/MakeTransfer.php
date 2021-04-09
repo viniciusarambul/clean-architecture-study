@@ -2,32 +2,25 @@
 
 namespace App\Usecase;
 
-use App\Infraestructure\Repository\UserArrayRepository;
-use App\Domain\User\User;
-use App\Domain\User\Account;
-use App\Domain\Transaction\Transaction;
-use App\Domain\Exception\InsuficientBalance;
-use App\Domain\Exception\UserNotAllowedMakeTransaction;
-use App\Domain\Exception\UserPayerDontExist;
-use App\Domain\Transaction\AntifraudServiceInterface;
-use App\Domain\Exception\TransferNotAuthorized;
-use App\Infraestructure\Repository\TransactionRepository;
+use App\Domain\Account\AccountRepositoryInterface;
+use App\Domain\Account\Transaction\AntifraudServiceInterface;
+use App\Domain\Account\Transaction\Transaction;
+use App\Usecase\Exception\InsuficientBalance;
+use App\Usecase\Exception\TransferNotAuthorized;
+use App\Usecase\Exception\UserNotAllowedMakeTransaction;
 
 class MakeTransfer
 {
 
-    private UserArrayRepository $repository;
     private AntifraudServiceInterface $antifraud;
-    private TransactionRepository $transaction;
+    private AccountRepositoryInterface $accountRepository;
 
     public function __construct(
-        UserArrayRepository $repository,
-        AntifraudServiceInterface $antifraud,
-        TransactionRepository $transaction
+        AccountRepositoryInterface $accountRepository,
+        AntifraudServiceInterface $antifraud
     ) {
-        $this->repository = $repository;
+        $this->accountRepository = $accountRepository;
         $this->antifraud = $antifraud;
-        $this->transaction = $transaction;
     }
 
     public function __invoke(
@@ -36,24 +29,25 @@ class MakeTransfer
         float $amount
     ) {
         if(!$this->antifraud->authorize()){
-            throw new TransferNotAuthorized;
+            throw new TransferNotAuthorized();
         }
 
-        $payee = $this->repository->find($payee);
-        $payer = $this->repository->find($payer);
+        $payee = $this->accountRepository->find($payee);
+        $payer = $this->accountRepository->find($payer);
 
-        if($payer->getType() == User::USER_MERCHANT){
-            throw new UserNotAllowedMakeTransaction;
+        if($payer->isMerchant()){
+            throw new UserNotAllowedMakeTransaction();
         }
 
-        if($payer->getAccount()->getBalance() < $amount){
-            throw new InsuficientBalance;
+        if($payer->getBalance() < $amount){
+            throw new InsuficientBalance();
         }
 
-        $payer->getAccount()->addTransaction(Transaction::debit($amount));
-        $payee->getAccount()->addTransaction(Transaction::credit($amount));
+        $payer->addTransaction(Transaction::debit($amount));
+        $payee->addTransaction(Transaction::credit($amount));
 
-        $save = $this->transaction->save($payee->getId(), $amount, $payer->getId());
+        $this->accountRepository->push($payee);
+        $this->accountRepository->push($payer);
         
     }
 

@@ -1,36 +1,26 @@
 <?php
 namespace App\Domain\Account;
 
-use App\Domain\Transaction\Transaction;
+use App\Domain\Account\Transaction\Transaction;
 
-class Account 
-{
-
+class Account {
     private string $id;
     private string $accountNumber;
+    private string $type;
+    private string $userId;
     private array $transaction;
 
-    public function __construct(string $id, string $accountNumber, array $transaction)
+    const ACCOUNT_PERSON = 'person';
+    const ACCOUNT_MERCHANT = 'merchant';
+
+    public function __construct(string $id, string $accountNumber, string $type, string $userId, array $transaction)
     {
         $this->id = $id;
         $this->accountNumber = $accountNumber;
+        $this->type = $type;
+        $this->userId = $userId;
         $this->transaction = $transaction;
 
-    }
-
-    public function getId() : string
-    {
-        return $this->id;
-    }
-
-    public function getAccountNumber() : string
-    {
-        return $this->accountNumber;
-    }
-
-    public function getTransaction() : array
-    {
-       return $this->transaction;
     }
 
     public function getBalance() : float
@@ -50,5 +40,50 @@ class Account
     public function addTransaction(Transaction $transaction)
     {
         $this->transaction[] = $transaction;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountNumber(): string
+    {
+        return $this->accountNumber;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserId(): string
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTransaction(): array
+    {
+        return $this->transaction;
+    }
+
+    public function isMerchant(): bool
+    {
+        return $this->type == self::ACCOUNT_MERCHANT;
     }
 }
