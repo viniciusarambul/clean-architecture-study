@@ -13,8 +13,13 @@ class Account {
     const ACCOUNT_PERSON = 'person';
     const ACCOUNT_MERCHANT = 'merchant';
 
-    public function __construct(string $id, string $accountNumber, string $type, string $userId, array $transaction)
-    {
+    public function __construct(
+        string $id,
+        string $accountNumber,
+        string $type,
+        string $userId,
+        array $transaction
+    ) {
         $this->id = $id;
         $this->accountNumber = $accountNumber;
         $this->type = $type;

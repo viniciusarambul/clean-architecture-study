@@ -18,8 +18,8 @@ final class AntifraudService implements AntifraudServiceInterface
 
     public function authorize(): bool
     {
-        $res = $this->client->request('GET', $this->uri);
-        $payload = json_decode($res->getBody());
+        $requestUri = $this->client->request('GET', $this->uri);
+        $payload = json_decode($requestUri->getBody());
 
         return $payload->message == "Autorizado";
     }

@@ -50,8 +50,4 @@ class User
         return $this->password;
     }
 
-    public function getType() : string
-    {
-        return $this->type;
-    }
 }
