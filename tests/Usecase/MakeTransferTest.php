@@ -2,6 +2,7 @@
 namespace App\Usecase;
 
 use App\Domain\Account\Account;
+use App\Domain\Account\AccountPostgresRepository;
 use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\Transaction\AntifraudServiceInterface;
 use App\Domain\Account\Transaction\Transaction;
@@ -26,7 +27,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
-        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
+        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
 
         $accountRepostoryMock
             ->method("find")
@@ -40,7 +41,7 @@ final class MakeTransferTest extends TestCase
     public function testMakeTransfer()
     {
         $payeeAccount = new Account("1","114", Account::ACCOUNT_PERSON, 1, []);
-        $payerAccount = new Account("2","115",Account::ACCOUNT_PERSON, 2, [
+        $payerAccount = new Account("2","3",Account::ACCOUNT_PERSON, 2, [
             Transaction::credit(100.00)
         ]);
 
@@ -50,7 +51,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
-        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
+        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
 
         $accountRepostoryMock
             ->method("find")
@@ -72,7 +73,7 @@ final class MakeTransferTest extends TestCase
         $this->expectException(UserNotAllowedMakeTransaction::class);
 
         $payeeAccount = new Account("1","114", Account::ACCOUNT_MERCHANT, 1, []);
-        $payerAccount = new Account("2","115",Account::ACCOUNT_MERCHANT, 2, [
+        $payerAccount = new Account("2","3",Account::ACCOUNT_MERCHANT, 2, [
             Transaction::credit(100.00)
         ]);
 
@@ -82,7 +83,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
-        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
+        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
 
         $accountRepostoryMock
             ->method("find")
@@ -100,7 +101,7 @@ final class MakeTransferTest extends TestCase
         $this->expectException(TransferNotAuthorized::class);
 
         $payeeAccount = new Account("1","114", Account::ACCOUNT_MERCHANT, 1, []);
-        $payerAccount = new Account("2","115",Account::ACCOUNT_MERCHANT, 2, [
+        $payerAccount = new Account("2","3",Account::ACCOUNT_MERCHANT, 2, [
             Transaction::credit(100.00)
         ]);
 
@@ -110,7 +111,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(false);
 
-        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
+        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
 
         $accountRepostoryMock
             ->method("find")
