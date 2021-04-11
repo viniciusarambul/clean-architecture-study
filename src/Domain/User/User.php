@@ -1,8 +1,6 @@
 <?php
 namespace App\Domain\User;
 
-use App\Domain\Account\Account;
-
 class User 
 {
     private string $id;
