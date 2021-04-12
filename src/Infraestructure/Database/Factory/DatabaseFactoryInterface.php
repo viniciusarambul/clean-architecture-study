@@ -7,5 +7,5 @@ use App\Infraestructure\Database\DatabaseInterface;
 
 interface DatabaseFactoryInterface
 {
-    public function createDb() : DatabaseInterface;
+    public function getInstance() : DatabaseInterface;
 }

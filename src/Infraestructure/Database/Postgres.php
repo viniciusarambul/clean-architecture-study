@@ -6,7 +6,7 @@ namespace App\Infraestructure\Database;
 use PDO;
 use PDOException;
 
-class Postgres implements DatabaseInterface
+class Postgres
 {
     private PDO $connection;
 

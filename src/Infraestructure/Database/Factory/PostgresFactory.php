@@ -29,14 +29,15 @@ class PostgresFactory implements DatabaseFactoryInterface
     }
 
 
-    public function createDb(): DatabaseInterface
+    public function getInstance(): DatabaseInterface
     {
         return new Postgres(
-            $this->host,
-            $this->port,
-            $this->dbname,
-            $this->user,
-            $this->password
+            'db',
+            '5432',
+            'transaction',
+            'root',
+            'password'
         );
     }
+
 }

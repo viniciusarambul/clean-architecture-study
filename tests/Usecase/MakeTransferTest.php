@@ -3,7 +3,6 @@ namespace App\Usecase;
 
 use App\Domain\Account\Account;
 use App\Domain\Account\AccountPostgresRepository;
-use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\Transaction\AntifraudServiceInterface;
 use App\Domain\Account\Transaction\Transaction;
 use App\Usecase\Exception\InsuficientBalance;
@@ -33,6 +32,10 @@ final class MakeTransferTest extends TestCase
             ->method("find")
             ->willReturn($payeeAccount);
 
+        $accountRepostoryMock
+            ->method("push")
+            ->willReturn($payeeAccount);
+
         $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock);
 
         $uc("1","2", 100);
@@ -55,6 +58,10 @@ final class MakeTransferTest extends TestCase
 
         $accountRepostoryMock
             ->method("find")
+            ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
+
+        $accountRepostoryMock
+            ->method("push")
             ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
 
@@ -89,6 +96,9 @@ final class MakeTransferTest extends TestCase
             ->method("find")
             ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
+        $accountRepostoryMock
+            ->method("push")
+            ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
         $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock);
 
@@ -117,6 +127,9 @@ final class MakeTransferTest extends TestCase
             ->method("find")
             ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
+        $accountRepostoryMock
+            ->method("push")
+            ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
         $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock);
 
