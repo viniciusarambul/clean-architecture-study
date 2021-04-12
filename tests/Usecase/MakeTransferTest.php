@@ -2,7 +2,7 @@
 namespace App\Usecase;
 
 use App\Domain\Account\Account;
-use App\Domain\Account\AccountPostgresRepository;
+use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\Transaction\AntifraudServiceInterface;
 use App\Domain\Account\Transaction\Transaction;
 use App\Usecase\Exception\InsuficientBalance;
@@ -26,7 +26,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
-        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
+        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
             ->method("find")
@@ -54,7 +54,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
-        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
+        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
             ->method("find")
@@ -90,7 +90,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
-        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
+        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
             ->method("find")
@@ -121,7 +121,7 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(false);
 
-        $accountRepostoryMock = $this->createMock(AccountPostgresRepository::class);
+        $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
             ->method("find")

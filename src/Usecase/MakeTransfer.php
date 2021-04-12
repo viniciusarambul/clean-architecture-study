@@ -2,7 +2,7 @@
 
 namespace App\Usecase;
 
-use App\Domain\Account\AccountPostgresRepository;
+use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\Transaction\AntifraudServiceInterface;
 use App\Domain\Account\Transaction\Transaction;
 use App\Usecase\Exception\InsuficientBalance;
@@ -13,10 +13,10 @@ class MakeTransfer
 {
 
     private AntifraudServiceInterface $antifraud;
-    private AccountPostgresRepository $accountRepository;
+    private AccountRepositoryInterface $accountRepository;
 
     public function __construct(
-        AccountPostgresRepository $accountRepository,
+        AccountRepositoryInterface $accountRepository,
         AntifraudServiceInterface $antifraud
     ) {
         $this->accountRepository = $accountRepository;

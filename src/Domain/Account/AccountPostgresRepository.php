@@ -16,15 +16,20 @@ class AccountPostgresRepository implements AccountRepositoryInterface
     public function find(string $id): Account
     {
         $instance = $this->factory->getInstance();
-        $instance->select("SELECT * FROM account where id=$id");
+        $instance->select(sprintf("SELECT * FROM account where id=%s",
+            $id
+            )
+        );
     }
 
     public function push(Account $account)
     {
         $instance = $this->factory->getInstance();
 
-        $attBalance = $account->getBalance();
-        $accounId = $account->getId();
-        $instance->select("UPDATE account set balance = $attBalance WHERE id=$accounId");
+        $instance->select(sprintf("UPDATE account set balance = %s WHERE id=%s",
+            $account->getBalance(),
+            $account->getId()
+            )
+        );
     }
 }
