@@ -43,8 +43,8 @@ class MakeTransfer
             throw new InsuficientBalance();
         }
 
-        $payer->addTransaction(Transaction::debit($amount));
-        $payee->addTransaction(Transaction::credit($amount));
+        $payer->addTransaction(Transaction::debit($amount, $payer->getId(), $payee->getId()));
+        $payee->addTransaction(Transaction::credit($amount, $payer->getId(), $payee->getId()));
 
         $this->accountRepository->push($payee);
         $this->accountRepository->push($payer);

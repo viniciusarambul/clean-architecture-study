@@ -38,6 +38,7 @@ class Account {
                 continue;
             }
             $balance-=$transaction->getAmount();
+
         }
         return $balance;
     }

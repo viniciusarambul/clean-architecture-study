@@ -9,26 +9,30 @@ class Transaction
 
     private string $type;
     private float $amount;
-    private string $payer_id;
-    private string $payee_id;
+    private string $payerId;
+    private string $payeeId;
 
-    public function __construct(string $type, float $amount, $payer_id, $payee_id)
-    {
+    public function __construct(
+        string $type,
+        float $amount,
+        string $payerId,
+        string $payeeId
+    ) {
         $this->type = $type;
         $this->amount = $amount;
-        $this->payer_id = $payer_id;
-        $this->payee_id = $payee_id;
+        $this->payerId = $payerId;
+        $this->payeeId = $payeeId;
 
     }
 
-    public static function debit(float $amount) : Transaction
+    public static function debit(float $amount, string $payerId, string $payeeId) : Transaction
     {
-        return new Transaction(Transaction::TRANSACTION_DEBIT, $amount);
+        return new Transaction(Transaction::TRANSACTION_DEBIT, $amount, $payerId, $payeeId);
     }
     
-    public static function credit(float $amount) : Transaction
+    public static function credit(float $amount, string $payerId, string $payeeId) : Transaction
     {
-        return new Transaction(Transaction::TRANSACTION_CREDIT, $amount);
+        return new Transaction(Transaction::TRANSACTION_CREDIT, $amount, $payerId, $payeeId);
     }
 
     public function getType() : string
@@ -43,12 +47,12 @@ class Transaction
 
     public function getPayer(): string
     {
-        return $this->payer_id;
+        return $this->payerId;
     }
 
     public function getPayee(): string
     {
-        return $this->payee_id;
+        return $this->payeeId;
     }
 
 

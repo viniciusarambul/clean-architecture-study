@@ -10,6 +10,7 @@ class AccountPostgresRepository implements AccountRepositoryInterface
     private PostgresFactory $factory;
     private const FIND_ACCOUNT = "SELECT * FROM accounts where id = '%s'";
     private const FIND_TRANSACTIONS_BY_ACCOUNT_ID = "SELECT * FROM transactions where payer_id = '%s' OR payee_id = '%s'";
+    PRIVATE const INSERT_TRANSACTION = "INSERT INTO transactions (id, payer_id, payee_id, amount) VALUES ('1234','%s','%s',%d)";
 
     public function __construct(
       PostgresFactory $factory
@@ -69,6 +70,20 @@ class AccountPostgresRepository implements AccountRepositoryInterface
     private function pushTransaction(Transaction $transaction)
     {
         //insert de transaction, validando a id da transaction
+        $connection = $this->factory->getConnection();
+        $transactionPayer = $transaction->getPayer();
+        $transactionPayee = $transaction->getPayee();
+        $transactionAmount = $transaction->getAmount();
+
+        $stmt = $connection->query(
+            sprintf(self::INSERT_TRANSACTION,
+            $transactionPayer,
+            $transactionPayee,
+            $transactionAmount
+            )
+        );
+
+        var_dump($stmt->execute());
     }
 
     private function findTransactionByAccountId(string $id)
@@ -82,7 +97,7 @@ class AccountPostgresRepository implements AccountRepositoryInterface
             while ($transaction = $query->fetch(\PDO::FETCH_ASSOC)) {
                 var_dump($transaction);
                 $type = $transaction['payer_id'] == $id ? Transaction::TRANSACTION_DEBIT : Transaction::TRANSACTION_CREDIT;
-                $transactions[] = new Transaction($type, $transaction['amount']);
+                $transactions[] = new Transaction($type, $transaction['amount'], $transaction['payer_id'], $transaction['payee_id']);
             }
 
             return $transactions;

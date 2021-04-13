@@ -45,7 +45,7 @@ final class MakeTransferTest extends TestCase
     {
         $payeeAccount = new Account("1","114", Account::ACCOUNT_PERSON, 1, []);
         $payerAccount = new Account("2","3",Account::ACCOUNT_PERSON, 2, [
-            Transaction::credit(100.00)
+            Transaction::credit(100.00, '2', '1')
         ]);
 
         $antifraudMock = $this->createMock(AntifraudServiceInterface::class);
@@ -81,7 +81,7 @@ final class MakeTransferTest extends TestCase
 
         $payeeAccount = new Account("1","114", Account::ACCOUNT_MERCHANT, 1, []);
         $payerAccount = new Account("2","3",Account::ACCOUNT_MERCHANT, 2, [
-            Transaction::credit(100.00)
+            Transaction::credit(100.00, '2', '1')
         ]);
 
         $antifraudMock = $this->createMock(AntifraudServiceInterface::class);
@@ -112,7 +112,7 @@ final class MakeTransferTest extends TestCase
 
         $payeeAccount = new Account("1","114", Account::ACCOUNT_MERCHANT, 1, []);
         $payerAccount = new Account("2","3",Account::ACCOUNT_MERCHANT, 2, [
-            Transaction::credit(100.00)
+            Transaction::credit(100.00, '2', '1')
         ]);
 
         $antifraudMock = $this->createMock(AntifraudServiceInterface::class);
