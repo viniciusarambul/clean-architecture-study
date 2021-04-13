@@ -6,7 +6,7 @@ namespace App\Infraestructure\Database;
 use PDO;
 use PDOException;
 
-class Postgres
+class PostgresFactory
 {
     private PDO $connection;
 
@@ -34,11 +34,8 @@ class Postgres
         }
     }
 
-    public function select(string $query): array
+    public function getConnection(): PDO
     {
-        $stmt = $this->connection->query($query);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->connection;
     }
 }
