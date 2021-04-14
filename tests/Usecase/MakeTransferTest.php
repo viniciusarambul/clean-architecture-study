@@ -1,9 +1,11 @@
 <?php 
 namespace App\Usecase;
 
+use App\Adapter\Service\NotificationService;
 use App\Domain\Account\Account;
 use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\Transaction\AntifraudServiceInterface;
+use App\Domain\Account\Transaction\NotificationServiceInterface;
 use App\Domain\Account\Transaction\Transaction;
 use App\Usecase\Exception\InsuficientBalance;
 use App\Usecase\Exception\TransferNotAuthorized;
@@ -26,6 +28,8 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
+        $notifyMock = $this->createMock(NotificationServiceInterface::class);
+
         $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
@@ -36,7 +40,7 @@ final class MakeTransferTest extends TestCase
             ->method("push")
             ->willReturn($payeeAccount);
 
-        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock);
+        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock, $notifyMock);
 
         $uc("1","2", 100);
     }
@@ -54,6 +58,8 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
+        $notifyMock = $this->createMock(NotificationServiceInterface::class);
+
         $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
@@ -65,7 +71,7 @@ final class MakeTransferTest extends TestCase
             ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
 
-        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock);
+        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock, $notifyMock);
 
         $uc("1","2", 100);
 
@@ -73,6 +79,9 @@ final class MakeTransferTest extends TestCase
         $this->assertEquals(100, $payeeAccount->getBalance());
         $this->assertCount(2, $payerAccount->getTransaction());
         $this->assertCount(1,$payeeAccount->getTransaction());
+        $this->assertEquals(Transaction::TRANSACTION_DEBIT, $payerAccount->getTransaction()[1]->getType());
+        $this->assertEquals(Transaction::TRANSACTION_CREDIT, $payeeAccount->getTransaction()[0]->getType());
+        $this->assertEquals($payerAccount->getId(), $payeeAccount->getTransaction()[0]->getPayee());
     }
 
     public function testPayerMerchant()
@@ -90,6 +99,8 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(true);
 
+        $notifyMock = $this->createMock(NotificationServiceInterface::class);
+
         $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
@@ -100,7 +111,8 @@ final class MakeTransferTest extends TestCase
             ->method("push")
             ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
-        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock);
+
+        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock, $notifyMock);
 
         $uc("1","2", 100);
 
@@ -121,6 +133,8 @@ final class MakeTransferTest extends TestCase
             ->method('authorize')
             ->willReturn(false);
 
+        $notifyMock = $this->createMock(NotificationServiceInterface::class);
+
         $accountRepostoryMock = $this->createMock(AccountRepositoryInterface::class);
 
         $accountRepostoryMock
@@ -131,7 +145,7 @@ final class MakeTransferTest extends TestCase
             ->method("push")
             ->will($this->onConsecutiveCalls($payeeAccount, $payerAccount));
 
-        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock);
+        $uc = new MakeTransfer($accountRepostoryMock, $antifraudMock, $notifyMock);
 
         $uc("1","2", 100);
     }

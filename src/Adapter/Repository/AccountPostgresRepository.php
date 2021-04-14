@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Domain\Account;
+namespace App\Adapter\Repository;
 
+use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\Transaction\Transaction;
 use App\Infraestructure\Database\PostgresFactory;
+use App\Domain\Account\Account;
 
 class AccountPostgresRepository implements AccountRepositoryInterface
 {
     private PostgresFactory $factory;
     private const FIND_ACCOUNT = "SELECT * FROM accounts where id = '%s'";
     private const FIND_TRANSACTIONS_BY_ACCOUNT_ID = "SELECT * FROM transactions where payer_id = '%s' OR payee_id = '%s'";
-    PRIVATE const INSERT_TRANSACTION = "INSERT INTO transactions (id, payer_id, payee_id, amount) VALUES ('1234','%s','%s',%d)";
 
     public function __construct(
       PostgresFactory $factory
@@ -64,7 +65,7 @@ class AccountPostgresRepository implements AccountRepositoryInterface
         $stmt->bindParam('number', $accountNumber, \PDO::PARAM_INT);
         $stmt->bindParam('type', $accountType, \PDO::PARAM_STR);
 
-        var_dump($stmt->execute());
+        $stmt->execute();
     }
 
     private function pushTransaction(Transaction $transaction)
@@ -75,15 +76,15 @@ class AccountPostgresRepository implements AccountRepositoryInterface
         $transactionPayee = $transaction->getPayee();
         $transactionAmount = $transaction->getAmount();
 
-        $stmt = $connection->query(
-            sprintf(self::INSERT_TRANSACTION,
-            $transactionPayer,
-            $transactionPayee,
-            $transactionAmount
-            )
-        );
+        $stmt = $connection->prepare("insert into transactions (id, payer_id, payee_id, amount)
+                    values (:id, :payer_id, :payee_id, :amount)
+                    on conflict (id) DO NOTHING");
+        $stmt->bindParam('id', $transaction->getId());
+        $stmt->bindParam('payer_id', $transactionPayer, \PDO::PARAM_STR);
+        $stmt->bindParam('payee_id', $transactionPayee, \PDO::PARAM_STR);
+        $stmt->bindParam('amount', $transactionAmount, \PDO::PARAM_INT);
 
-        var_dump($stmt->execute());
+        $stmt->execute();
     }
 
     private function findTransactionByAccountId(string $id)
@@ -92,12 +93,10 @@ class AccountPostgresRepository implements AccountRepositoryInterface
         $connection = $this->factory->getConnection();
         try {
             $query = $connection->query(sprintf(self::FIND_TRANSACTIONS_BY_ACCOUNT_ID, $id, $id));
-            var_dump(sprintf(self::FIND_TRANSACTIONS_BY_ACCOUNT_ID, $id, $id));
 
             while ($transaction = $query->fetch(\PDO::FETCH_ASSOC)) {
-                var_dump($transaction);
                 $type = $transaction['payer_id'] == $id ? Transaction::TRANSACTION_DEBIT : Transaction::TRANSACTION_CREDIT;
-                $transactions[] = new Transaction($type, $transaction['amount'], $transaction['payer_id'], $transaction['payee_id']);
+                $transactions[] = new Transaction($transaction['id'], $type, $transaction['amount'], $transaction['payer_id'], $transaction['payee_id']);
             }
 
             return $transactions;

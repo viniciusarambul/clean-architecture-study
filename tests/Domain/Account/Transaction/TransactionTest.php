@@ -9,7 +9,12 @@ class TransactionTest extends TestCase
 {
     public function testConstructTransaction()
     {
-        $transaction = new Transaction("credit", 100.00, '123', '456');
+        $transaction = new Transaction('278198d3-fa96-4833-abab-82f9e67f4712',"credit", 100.00, '123', '456');
+
+        $this->assertEquals(
+            "278198d3-fa96-4833-abab-82f9e67f4712",
+            $transaction->getId()
+        );
 
         $this->assertEquals(
             "credit",
