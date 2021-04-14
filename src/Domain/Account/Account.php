@@ -2,6 +2,7 @@
 namespace App\Domain\Account;
 
 use App\Domain\Account\Transaction\Transaction;
+use Ramsey\Uuid\Uuid;
 
 class Account {
     private string $id;
@@ -33,11 +34,13 @@ class Account {
         $balance = 0;
 
         foreach($this->transaction as $transaction){
-            if($transaction->getType() == Transaction::TRANSACTION_CREDIT){
+            if($transaction->getPayee() == $this->getId())
+            {
                 $balance+=$transaction->getAmount();
                 continue;
             }
             $balance-=$transaction->getAmount();
+
         }
         return $balance;
     }

@@ -4,6 +4,7 @@ namespace App\Usecase;
 
 use App\Domain\Account\AccountRepositoryInterface;
 use App\Domain\Account\Transaction\AntifraudServiceInterface;
+use App\Domain\Account\Transaction\NotificationServiceInterface;
 use App\Domain\Account\Transaction\Transaction;
 use App\Usecase\Exception\InsuficientBalance;
 use App\Usecase\Exception\TransferNotAuthorized;
@@ -11,16 +12,18 @@ use App\Usecase\Exception\UserNotAllowedMakeTransaction;
 
 class MakeTransfer
 {
-
     private AntifraudServiceInterface $antifraud;
     private AccountRepositoryInterface $accountRepository;
+    private NotificationServiceInterface $notify;
 
     public function __construct(
         AccountRepositoryInterface $accountRepository,
-        AntifraudServiceInterface $antifraud
+        AntifraudServiceInterface $antifraud,
+        NotificationServiceInterface $notify
     ) {
         $this->accountRepository = $accountRepository;
         $this->antifraud = $antifraud;
+        $this->notify = $notify;
     }
 
     public function __invoke(
@@ -43,12 +46,15 @@ class MakeTransfer
             throw new InsuficientBalance();
         }
 
-        $payer->addTransaction(Transaction::debit($amount));
-        $payee->addTransaction(Transaction::credit($amount));
+        var_dump($payer->getBalance());
+        var_dump($payer->getTransaction());
+
+        $payer->addTransaction(Transaction::debit($amount, $payer->getId(), $payee->getId()));
 
         $this->accountRepository->push($payee);
         $this->accountRepository->push($payer);
-        
+
+        $this->notify->notify();
     }
 
 }
