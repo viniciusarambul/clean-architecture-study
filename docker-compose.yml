@@ -16,7 +16,7 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: transaction
-      
+
   adminer:
     image: adminer
     restart: always
